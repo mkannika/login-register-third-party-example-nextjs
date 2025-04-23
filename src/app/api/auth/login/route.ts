@@ -3,7 +3,7 @@
 import prisma from "@/lib/prisma";
 
 export async function POST(req: Request) {
-  const { email, providerUUID, provider } = await req.json();
+  const { email } = await req.json();
 
   // Check if the user exists in the database
   const user = await prisma.user.findUnique({
