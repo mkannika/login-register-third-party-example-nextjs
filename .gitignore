@@ -1,41 +1,59 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
-# dependencies
+# Node.js dependencies
 /node_modules
+/hello-prisma
 /.pnp
 .pnp.*
+
+# Yarn
 .yarn/*
 !.yarn/patches
 !.yarn/plugins
 !.yarn/releases
 !.yarn/versions
 
-# testing
+# Testing
 /coverage
 
-# next.js
+# Next.js build output
 /.next/
 /out/
 
-# production
+# Production build
 /build
 
-# misc
-.DS_Store
-*.pem
+# Firebase
+.firebase/
+firebase-debug.log
 
-# debug
+# Environment files
+.env
+.env.* # Ignore all environment files (e.g., .env.local, .env.production)
+
+# Logs
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
 
-# env files (can opt-in for committing if needed)
-.env*
+# OS-specific files
+.DS_Store
+Thumbs.db
 
-# vercel
-.vercel
+# IDE-specific files
+.vscode/
+.idea/
+*.swp
+*.swo
 
-# typescript
+# TypeScript
 *.tsbuildinfo
 next-env.d.ts
+
+# Vercel
+.vercel
+
+# Miscellaneous
+*.pem # Private keys
+*.log # Log files
