@@ -8,17 +8,19 @@ datasource db {
 }
 
 model User {
-  id      Int      @id @default(autoincrement())
-  email   String   @unique
-  name    String?
-  posts   Post[]
+  id           String   @id @default(cuid()) // Auto-generated String ID
+  email        String   @unique
+  name         String?
+  provider     String?
+  providerUUID String?
+  posts        Post[]   // Relation to Post model
 }
 
 model Post {
-  id        Int     @id @default(autoincrement())
+  id        String   @id @default(cuid()) // Auto-generated String ID
   title     String
   content   String?
-  published Boolean @default(false)
-  author    User?   @relation(fields: [authorId], references: [id])
-  authorId  Int?
+  published Boolean  @default(false)
+  author    User?    @relation(fields: [authorId], references: [id]) // Relation to User model
+  authorId  String?  // Updated to String to match User.id
 }
