@@ -16,7 +16,7 @@ export default function SignUp() {
           <span>Your Logo</span>
         </Link>
       </header>
-      <main className="grid lg:grid-cols-2 grid-cols-1 gap-8 lg:gap-16 w-full h-full items-center">
+      <main className="lg:grid lg:grid-cols-2 grid-cols-1 gap-8 lg:gap-16 w-full h-full items-center flex flex-col justify-center">
         <div className="lg:max-w-[512px] w-full order-2">
           <div className="flex flex-col gap-2 mb-10">
             <h1 className="text-[#313131] text-[40px] font-bold">Sign up</h1>
@@ -26,7 +26,7 @@ export default function SignUp() {
           </div>
           <FormRegister />
         </div>
-        <div className="lg:max-w-[616px] w-full flex flex-col items-center justify-center order-1">
+        <div className="lg:max-w-[616px] w-full lg:flex flex-col items-center justify-center hidden">
           <div className="image-register">
             <Image
               src={IMAGE_REGISTER.src}
