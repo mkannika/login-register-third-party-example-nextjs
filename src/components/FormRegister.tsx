@@ -40,9 +40,9 @@ export default function FormRegister() {
       <FormProvider {...method}>
         <form
           onSubmit={method.handleSubmit(onSubmit)}
-          className="flex flex-col gap-6"
+          className="flex flex-col sm:gap-6 gap-4"
         >
-          <div className="grid grid-cols-2 gap-6">
+          <div className="grid grid-cols-2 sm:gap-6 gap-4">
             <Controller
               name="firstName"
               control={method.control}
@@ -89,7 +89,7 @@ export default function FormRegister() {
             />
           </div>
 
-          <div className="grid grid-cols-2 gap-6">
+          <div className="grid grid-cols-2 sm:gap-6 gap-4">
             <Controller
               name="email"
               control={method.control}
@@ -213,7 +213,7 @@ export default function FormRegister() {
               )}
             />
           </div>
-          <div className="mt-10 flex items-center gap-4 flex-col">
+          <div className="mt-6 flex items-center gap-4 flex-col">
             <button type="submit" className="hover:opacity-75">
               Submit
             </button>
@@ -226,6 +226,13 @@ export default function FormRegister() {
           </div>
         </form>
       </FormProvider>
+      <div className="sign-up-with relative flex items-center justify-center my-10">
+        <p className="text-sm font-medium text-black/50 text-center absolute bg-white px-6">
+          Or sign up with
+        </p>
+        {/* divider */}
+        <div className="divider border-t border-black/20 w-full" />
+      </div>
       <RegisterThirdParty />
     </>
   );
