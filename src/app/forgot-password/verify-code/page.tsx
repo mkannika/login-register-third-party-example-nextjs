@@ -1,11 +1,11 @@
-import FormForgotPassword from "@/components/FormForgotPassword";
+import FormVerifyCode from "@/components/FormVerifyCode";
 import LogoIcon from "@/components/LogoIcon";
-import IMAGE_FORGOT_PASSWORD from "@/public/image_03.webp";
+import IMAGE_01 from "@/public/image_01.webp";
 import { ArrowLeft } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 
-export default function ForgotPassword() {
+export default function VerifyCode() {
   return (
     <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 lg:pb-20 gap-2 lg:gap-16 xl:p-20 font-[family-name:var(--font-geist-sans)] max-w-[1140px] mx-auto">
       <header className="header w-full">
@@ -27,23 +27,22 @@ export default function ForgotPassword() {
               <ArrowLeft className="w-[16px]" /> Back to Login
             </Link>
             <h1 className="text-[#313131] text-2xl lg:text-[40px] font-bold lg:whitespace-nowrap">
-              Forgot your password?
+              Verify code
             </h1>
             <p className="text-[#313131] text-[14px] lg:text-[16px] font-normal opacity-75">
-              Don’t worry, happens to all of us. Enter your email below to
-              recover your password
+              An authentication code has been sent to your email.
             </p>
           </div>
-          <FormForgotPassword />
+          <FormVerifyCode />
         </div>
         <div className="lg:max-w-[616px] w-full lg:flex flex-col items-center justify-center hidden">
           <div className="image-">
             <Image
-              src={IMAGE_FORGOT_PASSWORD.src}
+              src={IMAGE_01.src}
               alt="Image"
-              blurDataURL={IMAGE_FORGOT_PASSWORD.blurDataURL}
-              width={IMAGE_FORGOT_PASSWORD.width}
-              height={IMAGE_FORGOT_PASSWORD.height}
+              blurDataURL={IMAGE_01.blurDataURL}
+              width={IMAGE_01.width}
+              height={IMAGE_01.height}
             />
           </div>
         </div>
