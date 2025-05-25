@@ -10,7 +10,7 @@ export default function LoginThirdParty() {
 
   return (
     <div className="flex justify-center items-center flex-col font-[500] mt-6">
-      <div className="grid grid-cols-3 gap-2 w-full">
+      <div className="flex justify-center items-center gap-2 w-full">
         <button
           className="w-full btn-third-party flex-1 gap-1"
           onClick={() => console.log("Facebook")}

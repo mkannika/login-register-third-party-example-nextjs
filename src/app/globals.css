@@ -48,6 +48,14 @@ input[type="password"] {
   border-radius: 4px;
 }
 
+@media (max-width: 768px) {
+  input[type="text"],
+  input[type="email"],
+  input[type="password"] {
+    height: calc(56px / 1.5);
+  }
+}
+
 button[type="submit"] {
   display: flex;
   height: 48px;
@@ -75,6 +83,13 @@ button.btn-third-party {
   flex: 1 0 0;
   border-radius: 4px;
   border: 1px solid #515def;
+  max-width: 150px;
+}
+
+@media (max-width: 768px) {
+  button.btn-third-party {
+    padding: calc(16px / 1.5) calc(24px / 1.5);
+  }
 }
 
 @layer base {
