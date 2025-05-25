@@ -1,27 +1,25 @@
 "use client";
 
-import { TextField } from "@radix-ui/themes";
+import { TextField } from "@radix-ui/themes/components/index";
+import Link from "next/link";
 import {
   Controller,
   FormProvider,
   SubmitHandler,
   useForm,
 } from "react-hook-form";
-import FormDivider from "./FormDivider";
-import LoginThirdParty from "./LoginThirdParty";
 
-type ForgotPasswordData = {
-  email: string;
+type VerifyCodeData = {
+  code: string;
 };
 
-export default function FormForgotPassword() {
-  const method = useForm<ForgotPasswordData>({
+export default function FormVerifyCode() {
+  const method = useForm<VerifyCodeData>({
     defaultValues: {
-      email: "",
+      code: "",
     },
   });
-  const onSubmit: SubmitHandler<ForgotPasswordData> = (data) =>
-    console.log(data);
+  const onSubmit: SubmitHandler<VerifyCodeData> = (data) => console.log(data);
 
   return (
     <>
@@ -31,27 +29,37 @@ export default function FormForgotPassword() {
           className="flex flex-col lg:gap-6 gap-4"
         >
           <Controller
-            name="email"
+            name="code"
             control={method.control}
             rules={{
-              required: "Email is required",
-              pattern: { value: /\S+@\S+\.\S+/, message: "Invalid email" },
+              required: "Verification code is required",
+              pattern: {
+                value: /^[0-9]{6}$/,
+                message: "Code must be a 6-digit number",
+              },
             }}
             render={({ field }) => (
               <div className="input-wrapper">
                 <TextField.Root
                   {...field}
-                  placeholder="john.doe@gmail.com"
-                  type="email"
+                  placeholder="123456"
+                  type="text"
+                  maxLength={6}
                 />
-                {method.formState.errors.email && (
+                {method.formState.errors.code && (
                   <p className="text-[#FF8682] text-sm mt-1">
-                    {method.formState.errors.email.message}
+                    {method.formState.errors.code.message}
                   </p>
                 )}
               </div>
             )}
           />
+          <p className="text-sm font-medium">
+            Didn’t receive a code?{" "}
+            <Link href="signup" className="text-[#FF8682] hover:underline">
+              Resend
+            </Link>
+          </p>
           <div className="flex items-center gap-4 flex-col">
             <button type="submit" className="hover:opacity-75">
               Submit
@@ -59,8 +67,6 @@ export default function FormForgotPassword() {
           </div>
         </form>
       </FormProvider>
-      <FormDivider text={"Or login with"} />
-      <LoginThirdParty />
     </>
   );
 }
