@@ -9,6 +9,7 @@ import {
   SubmitHandler,
   useForm,
 } from "react-hook-form";
+import FormDivider from "./FormDivider";
 import RegisterThirdParty from "./RegisterThirdParty";
 
 type RegisterData = {
@@ -226,13 +227,7 @@ export default function FormRegister() {
           </div>
         </form>
       </FormProvider>
-      <div className="sign-up-with relative flex items-center justify-center my-10">
-        <p className="text-sm font-medium text-black/50 text-center absolute bg-white px-6">
-          Or sign up with
-        </p>
-        {/* divider */}
-        <div className="divider border-t border-black/20 w-full" />
-      </div>
+      <FormDivider />
       <RegisterThirdParty />
     </>
   );

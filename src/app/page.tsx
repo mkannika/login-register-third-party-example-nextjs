@@ -17,9 +17,11 @@ export default function Home() {
         </Link>
       </header>
       <main className="lg:grid lg:grid-cols-2 grid-cols-1 gap-8 lg:gap-16 w-full h-full items-center flex flex-col justify-center">
-        <div className="lg:max-w-[512px] w-full">
+        <div className="lg:max-w-[512px] w-full max-w-80">
           <div className="flex flex-col gap-2 mb-10">
-            <h1 className="text-[#313131] text-[40px] font-bold">Login</h1>
+            <h1 className="text-[#313131] text-2xl lg:text-[40px] font-bold">
+              Login
+            </h1>
             <p className="text-[#313131] text-[16px] font-normal opacity-75">
               Welcome back! Please login to your account.
             </p>
