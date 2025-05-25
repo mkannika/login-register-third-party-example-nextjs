@@ -1,10 +1,11 @@
-import FormLogin from "@/components/FormLogin";
+import FormVerifyCode from "@/components/FormVerifyCode";
 import LogoIcon from "@/components/LogoIcon";
-import IMAGE_LOGIN from "@/public/image_01.webp";
+import IMAGE_01 from "@/public/image_01.webp";
+import { ArrowLeft } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 
-export default function Home() {
+export default function VerifyCode() {
   return (
     <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 lg:pb-20 gap-2 lg:gap-16 xl:p-20 font-[family-name:var(--font-geist-sans)] max-w-[1140px] mx-auto">
       <header className="header w-full">
@@ -18,24 +19,30 @@ export default function Home() {
       </header>
       <main className="lg:grid lg:grid-cols-2 grid-cols-1 gap-8 lg:gap-16 w-full h-full items-center flex flex-col justify-center">
         <div className="lg:max-w-[512px] w-full max-w-80">
-          <div className="flex flex-col gap-2 mb-10">
-            <h1 className="text-[#313131] text-2xl lg:text-[40px] font-bold">
-              Login
+          <div className="flex flex-col gap-2 lg:mb-6 mb-4">
+            <Link
+              href="/"
+              className="text-[14px] font-medium hover:underline flex items-center gap-2 opacity-70 lg:mb-6 mb-4"
+            >
+              <ArrowLeft className="w-[16px]" /> Back to Login
+            </Link>
+            <h1 className="text-[#313131] text-2xl lg:text-[40px] font-bold lg:whitespace-nowrap">
+              Verify code
             </h1>
-            <p className="text-[#313131] text-[16px] font-normal opacity-75">
-              Welcome back! Please login to your account.
+            <p className="text-[#313131] text-[14px] lg:text-[16px] font-normal opacity-75">
+              An authentication code has been sent to your email.
             </p>
           </div>
-          <FormLogin />
+          <FormVerifyCode />
         </div>
         <div className="lg:max-w-[616px] w-full lg:flex flex-col items-center justify-center hidden">
           <div className="image-">
             <Image
-              src={IMAGE_LOGIN.src}
-              alt="Login Image"
-              blurDataURL={IMAGE_LOGIN.blurDataURL}
-              width={IMAGE_LOGIN.width}
-              height={IMAGE_LOGIN.height}
+              src={IMAGE_01.src}
+              alt="Image"
+              blurDataURL={IMAGE_01.blurDataURL}
+              width={IMAGE_01.width}
+              height={IMAGE_01.height}
             />
           </div>
         </div>

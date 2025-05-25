@@ -3,6 +3,7 @@
 import LoginThirdParty from "@/components/LoginThirdParty";
 import { Checkbox } from "@radix-ui/react-checkbox";
 import { TextField } from "@radix-ui/themes";
+import clsx from "clsx";
 import Link from "next/link";
 import {
   Controller,
@@ -86,6 +87,13 @@ export default function FormLogin() {
                   <Checkbox
                     checked={field.value}
                     onCheckedChange={field.onChange}
+                    className={clsx(
+                      "w-4 h-4 border border-gray-300 rounded",
+                      // Checkbox styles
+                      field.value
+                        ? "bg-[#FF8682] border-transparent focus:ring-2 focus:ring-[#FF8682] focus:ring-offset-2"
+                        : "bg-white",
+                    )}
                   />
                   Remember me
                 </label>
