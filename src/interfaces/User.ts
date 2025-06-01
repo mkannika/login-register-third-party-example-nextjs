@@ -11,9 +11,15 @@ export interface LoginRequestBody {
 }
 
 // Define the shape of the user response
-export interface UserResponse {
+export interface UserResponse
+  extends Pick<LoginRequestBody, "provider" | "providerUUID"> {
   id: string;
   email: string;
-  name: string | null;
-  image: string | null;
+  name: string;
+  photoURL: string;
 }
+
+export type RegisterRequestBody = Pick<
+  UserResponse,
+  "email" | "provider" | "providerUUID" | "photoURL" | "name"
+>;

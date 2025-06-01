@@ -1,9 +1,12 @@
 // Create POST /api/auth/register endpoint for backend and create user on Prisma DB when register by Google Firebase
+import { RegisterRequestBody } from "@/interfaces/User";
 import prisma from "@/lib/prisma";
+import { isValidUrl } from "@/utils/common.utils";
 import { NextResponse } from "next/server";
 
 export async function POST(req: Request) {
-  const { email, name, provider, providerUUID } = await req.json();
+  const { email, name, provider, providerUUID, photoURL } =
+    (await req.json()) as RegisterRequestBody;
 
   // Check if the user already exists in the database
   const existingUser = await prisma.user.findUnique({
@@ -24,6 +27,14 @@ export async function POST(req: Request) {
     );
   }
 
+  // Check image URL is valid
+  if (photoURL && typeof photoURL === "string" && !isValidUrl(photoURL)) {
+    return NextResponse.json(
+      { status: false, message: "Invalid image URL" },
+      { status: 400 },
+    );
+  }
+
   // Create a new user in the database
   const newUser = await prisma.user.create({
     data: {
@@ -31,6 +42,7 @@ export async function POST(req: Request) {
       name,
       provider,
       providerUUID,
+      photoURL,
     },
   });
 

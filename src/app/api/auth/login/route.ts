@@ -28,7 +28,11 @@ export async function POST(req: Request) {
   return new Response(
     JSON.stringify({
       status: true,
-      data: user,
+      data: {
+        email,
+        id: user.id,
+        name: user.name || null,
+      },
     }),
     {
       status: 200,

@@ -22,9 +22,9 @@ export default function Home() {
             <h1 className="text-[#313131] text-2xl lg:text-[40px] font-bold">
               Login
             </h1>
-            <p className="text-[#313131] text-[16px] font-normal opacity-75">
+            <div className="text-[#313131] text-[16px] font-normal opacity-75">
               Welcome back! Please login to your account.
-            </p>
+            </div>
           </div>
           <FormLogin />
         </div>

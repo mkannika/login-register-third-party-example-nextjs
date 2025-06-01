@@ -1,10 +1,19 @@
+import { RegisterRequestBody } from "@/interfaces/User";
 import { auth } from "@/lib/firebase";
 import { loginWithGoogle, registerWithGoogle } from "@/services/auth.service";
+import { useAuthStore } from "@/stores/authStore";
+import {
+  generatePlaceholderImageUrl,
+  usernameFromEmail,
+} from "@/utils/common.utils";
 import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
+import { useRouter } from "next/navigation";
 import { useToast } from "./use-toast";
-
 const useAuthenThirdParty = () => {
   const { toast } = useToast();
+  const router = useRouter();
+  // Only subscribe to setUser action
+  const setUser = useAuthStore((state) => state.setUser);
 
   /**
    * @description Login with Google using OAuth Google Provider Firebase
@@ -58,7 +67,11 @@ const useAuthenThirdParty = () => {
           });
 
           // Save user data to local storage
-          localStorage.setItem("user", JSON.stringify(userData));
+          setUser(userData);
+          // localStorage.setItem("user", JSON.stringify(userData));
+
+          // Redirect to profile
+          router.push("/profile");
         } else {
           // Login failed with API error
           toast({
@@ -108,20 +121,20 @@ const useAuthenThirdParty = () => {
       }
 
       // Prepare data for API
-      const data = {
+      const name =
+        user.displayName ||
+        usernameFromEmail(user.providerData[0].email) ||
+        "Unknown User";
+      const data: RegisterRequestBody = {
         email: user.providerData[0].email,
         provider: "google",
         providerUUID: user.uid,
-        name: user.displayName || "Unknown User",
+        name,
+        photoURL: user.photoURL ?? generatePlaceholderImageUrl(name),
       };
 
       // Call register API
-      const res = await registerWithGoogle(
-        data.email,
-        data.provider,
-        data.providerUUID,
-        data.name,
-      );
+      const res = await registerWithGoogle(data);
 
       if (res) {
         const { status, message } = res;
@@ -137,6 +150,11 @@ const useAuthenThirdParty = () => {
               color: "black",
             },
           });
+
+          setUser(res.data);
+
+          // Redirect to profile
+          router.push("/profile");
         } else {
           // Registration failed with API error
           toast({

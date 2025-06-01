@@ -1,5 +1,5 @@
-import { IResponseFormat } from "@/interfaces/IResponse";
-import { UserResponse } from "@/interfaces/IUser";
+import { IResponseFormat } from "@/interfaces/Response";
+import { RegisterRequestBody, UserResponse } from "@/interfaces/User";
 
 /**
  * @description API function to login with Google using OAuth Google Provider Firebase
@@ -47,17 +47,19 @@ export const loginWithGoogle = async (
 };
 
 // Register the user to the API
-export const registerWithGoogle = async (
-  email: string,
-  name: string,
-  provider: string,
-  providerUUID: string,
-): Promise<IResponseFormat<UserResponse>> => {
+export const registerWithGoogle = async ({
+  email,
+  provider,
+  providerUUID,
+  name,
+  photoURL,
+}: RegisterRequestBody): Promise<IResponseFormat<UserResponse>> => {
   const body = {
     email,
-    name,
     provider,
     providerUUID,
+    name,
+    photoURL,
   };
 
   try {
