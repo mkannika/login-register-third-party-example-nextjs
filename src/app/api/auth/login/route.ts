@@ -9,10 +9,20 @@ export async function POST(req: Request) {
   const user = await prisma.user.findUnique({
     where: { email },
   });
+
   if (!user || user.password !== password) {
     return new Response(
-      JSON.stringify({ message: "Invalid email or password" }),
-      { status: 401 }
+      JSON.stringify({
+        status: false,
+        message: "Invalid email or password",
+      }),
+      { status: 401 },
     );
   }
+
+  // Return user data excluding password
+  const { password: _, ...userData } = user;
+  return new Response(JSON.stringify({ status: true, data: userData }), {
+    status: 200,
+  });
 }

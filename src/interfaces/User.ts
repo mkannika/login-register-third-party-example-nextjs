@@ -8,7 +8,7 @@ export interface LoginRequestBody {
   email: string;
   providerUUID?: string;
   provider?: string;
-  password?: string;
+  password?: string; // Optional for third-party logins
 }
 
 // Define the shape of the user response
@@ -17,10 +17,11 @@ export interface UserResponse
   id: string;
   email: string;
   name: string;
-  photoURL: string;
+  photoURL?: string;
+  password?: string;
 }
 
 export type RegisterRequestBody = Pick<
   UserResponse,
-  "email" | "provider" | "providerUUID" | "photoURL" | "name"
+  "email" | "provider" | "providerUUID" | "photoURL" | "name" | "password"
 >;

@@ -46,9 +46,7 @@ export const loginWithProvider = async ({
     return data;
   } catch (error: any) {
     // Return the error message from the API or a generic error message
-    throw new Error(
-      error.message || "An unexpected error occurred during login",
-    );
+    return error || "An unexpected error occurred during login";
   }
 };
 
@@ -88,8 +86,6 @@ export const registerWithProvider = async ({
     return data;
   } catch (error: any) {
     // Return the error message from the API or a generic error message
-    throw new Error(
-      error.message || "An unexpected error occurred during registration",
-    );
+    return error || "An unexpected error occurred during login";
   }
 };

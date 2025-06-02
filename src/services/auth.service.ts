@@ -17,7 +17,7 @@ export const loginEmailPassword = async ({
   };
 
   try {
-    const response = await fetch("/api/auth/login-password", {
+    const response = await fetch("/api/auth/login", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -36,8 +36,6 @@ export const loginEmailPassword = async ({
     return data;
   } catch (error: any) {
     // Return the error message from the API or a generic error message
-    throw new Error(
-      error.message || "An unexpected error occurred during login",
-    );
+    return error || "An unexpected error occurred during login";
   }
 };

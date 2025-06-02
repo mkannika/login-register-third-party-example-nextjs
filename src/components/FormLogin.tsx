@@ -1,10 +1,14 @@
 "use client";
 
 import LoginThirdParty from "@/components/LoginThirdParty";
+import { toast } from "@/hooks/use-toast";
+import { loginEmailPassword } from "@/services/auth.service";
 import { useAuthStore } from "@/stores/authStore";
 import { Checkbox } from "@radix-ui/react-checkbox";
 import { TextField } from "@radix-ui/themes";
+import { useMutation } from "@tanstack/react-query";
 import clsx from "clsx";
+import { LoaderIcon } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
@@ -40,7 +44,30 @@ export default function FormLogin() {
       remember_me: false,
     },
   });
-  const onSubmit: SubmitHandler<LoginData> = (data) => console.log(data);
+
+  const { mutateAsync, isPending } = useMutation({
+    mutationFn: async (data: LoginData) => {
+      const res = await loginEmailPassword({
+        email: data.email,
+        password: data.password,
+      });
+      if (!res.status) {
+        toast({
+          title: "Error",
+          description: res.message,
+          style: {
+            backgroundColor: "#FF8682",
+            borderColor: "#FF8682",
+            color: "white",
+          },
+        });
+      }
+    },
+  });
+
+  const onSubmit: SubmitHandler<LoginData> = (data) => {
+    mutateAsync(data);
+  };
 
   return (
     <>
@@ -121,7 +148,14 @@ export default function FormLogin() {
             </Link>
           </div>
           <div className="mt-10 flex items-center gap-4 flex-col">
-            <button type="submit" className="hover:opacity-75">
+            <button
+              type="submit"
+              className="hover:opacity-75 disabled:opacity-75"
+              disabled={isPending}
+            >
+              {isPending ? (
+                <LoaderIcon className="animate-spin" aria-label="Loading" />
+              ) : null}
               Submit
             </button>
             <div className="text-sm font-medium">
