@@ -6,8 +6,9 @@ export interface IUser {
 
 export interface LoginRequestBody {
   email: string;
-  providerUUID: string;
-  provider: string;
+  providerUUID?: string;
+  provider?: string;
+  password?: string;
 }
 
 // Define the shape of the user response

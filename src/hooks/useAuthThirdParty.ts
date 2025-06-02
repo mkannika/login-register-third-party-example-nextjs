@@ -1,6 +1,9 @@
 import { RegisterRequestBody } from "@/interfaces/User";
 import { auth } from "@/lib/firebase";
-import { loginWithGoogle, registerWithGoogle } from "@/services/auth.service";
+import {
+  loginWithProvider,
+  registerWithProvider,
+} from "@/services/authThirdParty.service";
 import { useAuthStore } from "@/stores/authStore";
 import {
   generatePlaceholderImageUrl,
@@ -9,7 +12,8 @@ import {
 import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import { useRouter } from "next/navigation";
 import { useToast } from "./use-toast";
-const useAuthenThirdParty = () => {
+
+const useAuthThirdParty = () => {
   const { toast } = useToast();
   const router = useRouter();
   // Only subscribe to setUser action
@@ -27,6 +31,8 @@ const useAuthenThirdParty = () => {
       const result = await signInWithPopup(auth, googleProvider);
       const { user } = result;
 
+      console.log("Google Sign In Result:", result);
+
       // Validate user data
       if (!user?.providerData[0]?.email || !result.providerId) {
         toast({
@@ -42,14 +48,18 @@ const useAuthenThirdParty = () => {
         provider: "google",
         providerUUID: user.uid,
         name: user.displayName || "Unknown User",
+        // refreshToken: user.refreshToken,
+        // accessToken: token,
       };
 
+      console.log("Login Data:", data);
+
       // Call login API
-      const res = await loginWithGoogle(
-        data.email,
-        data.provider,
-        data.providerUUID,
-      );
+      const res = await loginWithProvider({
+        email: data.email,
+        provider: data.provider,
+        providerUUID: data.providerUUID,
+      });
 
       if (res) {
         const { status, data: userData, message } = res;
@@ -127,14 +137,14 @@ const useAuthenThirdParty = () => {
         "Unknown User";
       const data: RegisterRequestBody = {
         email: user.providerData[0].email,
-        provider: "google",
+        provider: user.providerData[0].providerId,
         providerUUID: user.uid,
         name,
         photoURL: user.photoURL ?? generatePlaceholderImageUrl(name),
       };
 
       // Call register API
-      const res = await registerWithGoogle(data);
+      const res = await registerWithProvider(data);
 
       if (res) {
         const { status, message } = res;
@@ -182,10 +192,19 @@ const useAuthenThirdParty = () => {
     }
   };
 
+  const handleLogout = () => {
+    // Clear user data and redirect to home
+    useAuthStore.getState().logout();
+    if (typeof window !== "undefined") {
+      window.location.href = "/";
+    }
+  };
+
   return {
     onLoginWithGoogle,
     onRegisterWithGoogle,
+    handleLogout,
   };
 };
 
-export default useAuthenThirdParty;
+export default useAuthThirdParty;

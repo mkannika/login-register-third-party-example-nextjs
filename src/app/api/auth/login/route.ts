@@ -3,39 +3,16 @@
 import prisma from "@/lib/prisma";
 
 export async function POST(req: Request) {
-  const { email } = await req.json();
+  const { email, password } = await req.json();
 
-  // Check if the user exists in the database
+  // Check if the user exists in the database and if the password is correct
   const user = await prisma.user.findUnique({
-    where: {
-      email,
-    },
+    where: { email },
   });
-
-  if (!user) {
+  if (!user || user.password !== password) {
     return new Response(
-      JSON.stringify({
-        status: false,
-        message: "User not found",
-      }),
-      {
-        status: 404,
-      },
+      JSON.stringify({ message: "Invalid email or password" }),
+      { status: 401 }
     );
   }
-
-  // If user exists, return the user data
-  return new Response(
-    JSON.stringify({
-      status: true,
-      data: {
-        email,
-        id: user.id,
-        name: user.name || null,
-      },
-    }),
-    {
-      status: 200,
-    },
-  );
 }

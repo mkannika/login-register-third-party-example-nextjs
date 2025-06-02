@@ -56,7 +56,8 @@ input[type="password"] {
   }
 }
 
-button[type="submit"] {
+button[type="submit"],
+button.btn-purple {
   display: flex;
   height: 48px;
   padding: 8px 16px;

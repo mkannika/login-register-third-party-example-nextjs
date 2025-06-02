@@ -1,10 +1,13 @@
 "use client";
 
 import LoginThirdParty from "@/components/LoginThirdParty";
+import { useAuthStore } from "@/stores/authStore";
 import { Checkbox } from "@radix-ui/react-checkbox";
 import { TextField } from "@radix-ui/themes";
 import clsx from "clsx";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 import {
   Controller,
   FormProvider,
@@ -19,6 +22,17 @@ type LoginData = {
 };
 
 export default function FormLogin() {
+  const user = useAuthStore((state) => state.user);
+  const router = useRouter();
+
+  // Use useEffect for navigation side-effect
+  useEffect(() => {
+    if (user) {
+      router.push("/profile");
+      return; // Prevent further execution
+    }
+  }, [user, router]);
+
   const method = useForm<LoginData>({
     defaultValues: {
       email: "",

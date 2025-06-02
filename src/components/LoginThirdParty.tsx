@@ -1,12 +1,12 @@
 "use client";
 
 import GoogleIcon from "@/components/GoogleIcon";
-import useAuthenThirdParty from "@/hooks/useAuthenThirdParty";
+import useAuthThirdParty from "@/hooks/useAuthThirdParty";
 import AppleIcon from "./AppleIcon";
 import FacebookIcon from "./FacebookIcon";
 
 export default function LoginThirdParty() {
-  const { onLoginWithGoogle } = useAuthenThirdParty();
+  const { onLoginWithGoogle } = useAuthThirdParty();
 
   return (
     <div className="flex justify-center items-center flex-col font-[500] mt-6">

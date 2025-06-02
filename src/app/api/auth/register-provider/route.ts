@@ -1,4 +1,3 @@
-// Create POST /api/auth/register endpoint for backend and create user on Prisma DB when register by Google Firebase
 import { RegisterRequestBody } from "@/interfaces/User";
 import prisma from "@/lib/prisma";
 import { isValidUrl } from "@/utils/common.utils";
