@@ -1,3 +1,5 @@
+"use client";
+
 import BaseProvider from "@/components/BaseProvider";
 import FormLogin from "@/components/FormLogin";
 import LogoIcon from "@/components/LogoIcon";

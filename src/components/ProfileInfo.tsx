@@ -1,6 +1,5 @@
 "use client";
 
-import { toast } from "@/hooks/use-toast";
 import useAuth from "@/hooks/useAuth";
 import { useAuthStore } from "@/stores/authStore";
 import { generatePlaceholderImageUrl } from "@/utils/common.utils";
@@ -30,20 +29,7 @@ export default function ProfileInfo() {
   const { handleLogout } = useAuth();
 
   useEffect(() => {
-    if (!user) {
-      // If user is null, redirect to login or show a message
-      toast({
-        title: "Error",
-        description: "You must be logged in to access this page.",
-        style: {
-          backgroundColor: "#FF8682",
-          borderColor: "#FF8682",
-          color: "white",
-        },
-      });
-      router.push("/");
-      return;
-    }
+    if (!user) router.push("/");
   }, [user]);
 
   return (

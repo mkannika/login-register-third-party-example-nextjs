@@ -17,7 +17,11 @@ const useAuth = () => {
         password,
       });
       if (res.status) {
-        setUser(res.data);
+        setUser({
+          email: res.data.email,
+          name: res.data.name || "Unknown User",
+          photoURL: res.data.photoURL || "",
+        });
         router.push("/profile");
       }
     },

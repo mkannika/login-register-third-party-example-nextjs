@@ -25,3 +25,10 @@ export type RegisterRequestBody = Pick<
   UserResponse,
   "email" | "provider" | "providerUUID" | "photoURL" | "name" | "password"
 >;
+
+// Type User for save in localStorage public data ONLY
+export type UserStorage = {
+  email: string;
+  name: string;
+  photoURL: string;
+};
