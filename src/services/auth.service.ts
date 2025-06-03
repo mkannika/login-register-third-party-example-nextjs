@@ -1,5 +1,10 @@
 import { IResponseFormat } from "@/interfaces/Response";
-import { LoginRequestBody, UserResponse } from "@/interfaces/User";
+import {
+  LoginRequestBody,
+  RegisterRequestBody,
+  UserResponse,
+} from "@/interfaces/User";
+import bcrypt from 'bcrypt';
 
 /**
  * @description API function to login with email and password
@@ -37,5 +42,41 @@ export const loginEmailPassword = async ({
   } catch (error: any) {
     // Return the error message from the API or a generic error message
     return error || "An unexpected error occurred during login";
+  }
+};
+
+/**
+ * @description API function to register a new user
+ */
+export const register = async (
+  data: Pick<RegisterRequestBody, "email" | "password" | "name">,
+): Promise<IResponseFormat<UserResponse>> => {
+  const body = {
+    email: data.email,
+    password: data.password,
+    name: data.name,
+  };
+
+  try {
+    const response = await fetch("/api/auth/register", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(body),
+    });
+
+    // Check if the response is not OK
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.message || "Failed to register");
+    }
+
+    // Parse and return the response data
+    const data: IResponseFormat<UserResponse> = await response.json();
+    return data;
+  } catch (error: any) {
+    // Return the error message from the API or a generic error message
+    return error || "An unexpected error occurred during registration";
   }
 };

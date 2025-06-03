@@ -1,3 +1,4 @@
+import BaseProvider from "@/components/BaseProvider";
 import FormRegister from "@/components/FormRegister";
 import LogoIcon from "@/components/LogoIcon";
 import IMAGE_REGISTER from "@/public/image_02.webp";
@@ -28,7 +29,9 @@ export default function SignUp() {
               Let’s get you all st up so you can access your personal account.
             </p>
           </div>
-          <FormRegister />
+          <BaseProvider>
+            <FormRegister />
+          </BaseProvider>
         </div>
         <div className="lg:max-w-[616px] w-full lg:flex flex-col items-center justify-center hidden">
           <div className="image-register">

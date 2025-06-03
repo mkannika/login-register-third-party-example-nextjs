@@ -1,8 +1,16 @@
 "use client";
 
+import { toast } from "@/hooks/use-toast";
+import { register } from "@/services/auth.service";
+import { useAuthStore } from "@/stores/authStore";
+import { TOAST_STYLE } from "@/styles/toast.style";
 import { Checkbox } from "@radix-ui/react-checkbox";
 import { TextField } from "@radix-ui/themes";
+import { useMutation } from "@tanstack/react-query";
+import { LoaderIcon } from "lucide-react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useCallback } from "react";
 import {
   Controller,
   FormProvider,
@@ -17,24 +25,65 @@ type RegisterData = {
   lastName: string;
   email: string;
   password: string;
-  phone: string;
   confirm_password: string;
   agree: boolean;
 };
 
 export default function FormRegister() {
+  const router = useRouter();
+  // Only subscribe to setUser action
+  const setUser = useAuthStore((state) => state.setUser);
+
   const method = useForm<RegisterData>({
     defaultValues: {
       firstName: "",
       lastName: "",
       email: "",
       password: "",
-      phone: "",
       confirm_password: "",
       agree: false,
     },
   });
-  const onSubmit: SubmitHandler<RegisterData> = (data) => console.log(data);
+
+  const { mutateAsync, isPending } = useMutation({
+    mutationFn: async (data: RegisterData) => {
+      const res = await register({
+        email: data.email,
+        password: data.password,
+        name: `${data.firstName} ${data.lastName}`,
+      });
+      if (!res.status) {
+        toast({
+          title: "Error",
+          description: res.message,
+          style: TOAST_STYLE.error,
+        });
+      } else {
+        // Handle successful registration, e.g., redirect or show success message
+        toast({
+          title: "Success",
+          description: "Registration successful!",
+          style: TOAST_STYLE.success,
+        });
+        method.reset();
+
+        // Set user data in the store
+        setUser({
+          email: res.data.email,
+          name: res.data.name || "Unknown User",
+          photoURL: res.data.photoURL || "",
+        });
+        setTimeout(() => {
+          router.push("/profile");
+        }, 1000);
+      }
+    },
+  });
+
+  const onSubmit: SubmitHandler<RegisterData> = useCallback(
+    (data) => mutateAsync(data),
+    [mutateAsync],
+  );
 
   return (
     <>
@@ -90,7 +139,7 @@ export default function FormRegister() {
             />
           </div>
 
-          <div className="grid grid-cols-2 sm:gap-6 gap-4">
+          <div className="grid grid-cols-1 sm:gap-6 gap-4">
             <Controller
               name="email"
               control={method.control}
@@ -104,31 +153,6 @@ export default function FormRegister() {
                   {method.formState.errors.email && (
                     <p className="text-[#FF8682] text-sm mt-1">
                       {method.formState.errors.email.message}
-                    </p>
-                  )}
-                </div>
-              )}
-            />
-            <Controller
-              name="phone"
-              control={method.control}
-              rules={{
-                required: "Phone number is required",
-                pattern: {
-                  value: /^\+?[0-9]{10,}$/,
-                  message: "Invalid phone number",
-                },
-              }}
-              render={({ field }) => (
-                <div className="input-wrapper">
-                  <TextField.Root
-                    {...field}
-                    placeholder="Phone Number"
-                    type="text"
-                  />
-                  {method.formState.errors.phone && (
-                    <p className="text-[#FF8682] text-sm mt-1">
-                      {method.formState.errors.phone.message}
                     </p>
                   )}
                 </div>
@@ -215,7 +239,14 @@ export default function FormRegister() {
             />
           </div>
           <div className="mt-6 flex items-center gap-4 flex-col">
-            <button type="submit" className="hover:opacity-75">
+            <button
+              type="submit"
+              className="hover:opacity-75"
+              disabled={isPending}
+            >
+              {isPending ? (
+                <LoaderIcon className="animate-spin" aria-label="Loading" />
+              ) : null}
               Submit
             </button>
             <p className="text-sm font-medium">

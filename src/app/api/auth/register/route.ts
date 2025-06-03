@@ -1,13 +1,10 @@
-// Create function to handle POST requests for user registration with email and password and find on prisma
-
 import { RegisterRequestBody } from "@/interfaces/User";
 import prisma from "@/lib/prisma";
-import { isValidUrl } from "@/utils/common.utils";
+import bcrypt from "bcrypt";
 import { NextResponse } from "next/server";
 
 export async function POST(req: Request) {
-  const { email, name, password, photoURL } =
-    (await req.json()) as RegisterRequestBody;
+  const { email, name, password } = (await req.json()) as RegisterRequestBody;
 
   // Check if the user already exists in the database
   const existingUser = await prisma.user.findUnique({
@@ -28,21 +25,27 @@ export async function POST(req: Request) {
     );
   }
 
-  // Check image URL is valid
-  if (photoURL && typeof photoURL === "string" && !isValidUrl(photoURL)) {
-    return NextResponse.json(
-      { status: false, message: "Invalid image URL" },
-      { status: 400 },
+  if (!email || !name || !password) {
+    return new Response(
+      JSON.stringify({
+        status: false,
+        message: "Email, name, and password are required",
+      }),
+      {
+        status: 400,
+      },
     );
   }
+
+  // Encrypt the password before storing it
+  const hashedPassword = await bcrypt.hash(password, 10);
 
   // Create a new user in the database
   const newUser = await prisma.user.create({
     data: {
       email,
       name,
-      password, // Assuming password is hashed before this step
-      photoURL,
+      password: hashedPassword,
     },
   });
 
@@ -52,7 +55,6 @@ export async function POST(req: Request) {
       id: newUser.id,
       email: newUser.email,
       name: newUser.name,
-      photoURL: newUser.photoURL || "",
     },
   });
 }

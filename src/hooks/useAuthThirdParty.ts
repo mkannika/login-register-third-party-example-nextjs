@@ -7,6 +7,7 @@ import {
   registerWithProvider,
 } from "@/services/authThirdParty.service";
 import { useAuthStore } from "@/stores/authStore";
+import { TOAST_STYLE } from "@/styles/toast.style";
 import {
   generatePlaceholderImageUrl,
   usernameFromEmail,
@@ -94,11 +95,7 @@ const useAuthThirdParty = () => {
           toast({
             title: "Login Failed",
             description: message || "เกิดข้อผิดพลาดในการเข้าสู่ระบบ",
-            style: {
-              backgroundColor: "#FF8682",
-              borderColor: "#FF8682",
-              color: "white",
-            },
+            style: TOAST_STYLE.error,
           });
         }
       }
@@ -118,11 +115,7 @@ const useAuthThirdParty = () => {
               title: "บัญชีนี้มีอยู่แล้วโดยใช้รหัสผ่าน",
               description:
                 "กรุณาเข้าสู่ระบบด้วยรหัสผ่านของคุณเพื่อเชื่อมโยงผู้ให้บริการนี้",
-              style: {
-                backgroundColor: "#FF8682",
-                borderColor: "#FF8682",
-                color: "white",
-              },
+              style: TOAST_STYLE.error,
             });
             // Optionally, prompt for password and link
             // (You can implement a modal for password input here)
@@ -136,21 +129,13 @@ const useAuthThirdParty = () => {
             toast({
               title: "บัญชีนี้มีอยู่แล้ว",
               description: `บัญชีนี้มีอยู่แล้วโดยใช้ ${existingProvider} โปรดเข้าสู่ระบบด้วย ${existingProvider} และเชื่อมโยงจากโปรไฟล์ของคุณ`,
-              style: {
-                backgroundColor: "#FF8682",
-                borderColor: "#FF8682",
-                color: "white",
-              },
+              style: TOAST_STYLE.error,
             });
           } else {
             toast({
               title: "บัญชีนี้มีอยู่แล้ว",
               description: `โปรดเข้าสู่ระบบด้วยผู้ให้บริการที่มีอยู่แล้วและเชื่อมโยงจากโปรไฟล์ของคุณ`,
-              style: {
-                backgroundColor: "#FF8682",
-                borderColor: "#FF8682",
-                color: "white",
-              },
+              style: TOAST_STYLE.error,
             });
           }
         }
@@ -160,11 +145,7 @@ const useAuthThirdParty = () => {
       toast({
         title: "Error",
         description: error.message || "เกิดข้อผิดพลาดที่ไม่คาดคิด",
-        style: {
-          backgroundColor: "#FF8682",
-          borderColor: "#FF8682",
-          color: "white",
-        },
+        style: TOAST_STYLE.error,
       });
     }
   };
@@ -219,11 +200,7 @@ const useAuthThirdParty = () => {
         toast({
           title: "Registered",
           description: "You have registered successfully.",
-          style: {
-            backgroundColor: "#A7F3D0",
-            borderColor: "#A7F3D0",
-            color: "black",
-          },
+          style: TOAST_STYLE.success,
         });
 
         setUser({
@@ -237,22 +214,14 @@ const useAuthThirdParty = () => {
         toast({
           title: "Registration Failed",
           description: res?.message || "An error occurred during registration.",
-          style: {
-            backgroundColor: "#FF8682",
-            borderColor: "#FF8682",
-            color: "white",
-          },
+          style: TOAST_STYLE.error,
         });
       }
     } catch (error: any) {
       toast({
         title: "Error",
         description: error.message || "เกิดข้อผิดพลาดที่ไม่คาดคิด",
-        style: {
-          backgroundColor: "#FF8682",
-          borderColor: "#FF8682",
-          color: "white",
-        },
+        style: TOAST_STYLE.error,
       });
     }
   };

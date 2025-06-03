@@ -4,6 +4,7 @@ import LoginThirdParty from "@/components/LoginThirdParty";
 import { toast } from "@/hooks/use-toast";
 import { loginEmailPassword } from "@/services/auth.service";
 import { useAuthStore } from "@/stores/authStore";
+import { TOAST_STYLE } from "@/styles/toast.style";
 import { Checkbox } from "@radix-ui/react-checkbox";
 import { TextField } from "@radix-ui/themes";
 import { useMutation } from "@tanstack/react-query";
@@ -11,7 +12,7 @@ import clsx from "clsx";
 import { LoaderIcon } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { useCallback, useEffect } from "react";
 import {
   Controller,
   FormProvider,
@@ -27,6 +28,7 @@ type LoginData = {
 
 export default function FormLogin() {
   const user = useAuthStore((state) => state.user);
+  const setUser = useAuthStore((state) => state.setUser);
   const router = useRouter();
 
   const method = useForm<LoginData>({
@@ -47,19 +49,35 @@ export default function FormLogin() {
         toast({
           title: "Error",
           description: res.message,
-          style: {
-            backgroundColor: "#FF8682",
-            borderColor: "#FF8682",
-            color: "white",
-          },
+          style: TOAST_STYLE.error,
         });
+        return;
       }
+
+      // Set user in the auth store
+      setUser({
+        email: res.data.email,
+        name: res.data.name,
+        photoURL: res.data.photoURL || "",
+      });
+      toast({
+        title: "Success",
+        description: "Login successful",
+        style: TOAST_STYLE.success,
+      });
+
+      setTimeout(() => {
+        router.push("/profile");
+      }, 1000);
     },
   });
 
-  const onSubmit: SubmitHandler<LoginData> = (data) => {
-    mutateAsync(data);
-  };
+  const onSubmit: SubmitHandler<LoginData> = useCallback(
+    (data) => {
+      mutateAsync(data);
+    },
+    [mutateAsync],
+  );
 
   // Use useEffect for navigation side-effect
   useEffect(() => {

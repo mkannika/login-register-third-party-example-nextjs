@@ -1,6 +1,5 @@
-// Create POST /api/auth/login endpoint for backend and find user on Prisma DB response UserResponse
-
 import prisma from "@/lib/prisma";
+import bcrypt from "bcrypt";
 
 export async function POST(req: Request) {
   const { email, password } = await req.json();
@@ -10,7 +9,19 @@ export async function POST(req: Request) {
     where: { email },
   });
 
-  if (!user || user.password !== password) {
+  if (!user?.password) {
+    return new Response(
+      JSON.stringify({
+        status: false,
+        message: "User not found or password not set",
+      }),
+      { status: 404 },
+    );
+  }
+
+  const isPasswordCorrect = await bcrypt.compare(password, user.password);
+
+  if (!user || !isPasswordCorrect) {
     return new Response(
       JSON.stringify({
         status: false,

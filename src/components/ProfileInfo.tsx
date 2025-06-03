@@ -40,7 +40,7 @@ export default function ProfileInfo() {
           My Profile
         </h1>
         <div className="space-y-2">
-          {user?.name && (
+          {user?.name && user?.photoURL && (
             <div className="avatar">
               <Image
                 src={user?.photoURL || generatePlaceholderImageUrl(user?.name)}
