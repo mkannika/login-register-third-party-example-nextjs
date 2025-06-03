@@ -2,7 +2,6 @@
 
 import GoogleIcon from "@/components/GoogleIcon";
 import useLoginThirdParty from "@/hooks/useAuthThirdParty";
-import AppleIcon from "./AppleIcon";
 import FacebookIcon from "./FacebookIcon";
 
 export default function LoginThirdParty() {
@@ -23,9 +22,9 @@ export default function LoginThirdParty() {
         >
           <GoogleIcon />
         </button>
-        <button className="w-full btn-third-party flex-1 gap-1">
+        {/* <button className="w-full btn-third-party flex-1 gap-1">
           <AppleIcon />
-        </button>
+        </button> */}
       </div>
     </div>
   );
