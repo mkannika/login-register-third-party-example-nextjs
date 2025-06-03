@@ -18,7 +18,7 @@ This project is designed for developers who want to learn how to implement moder
 - **Radix UI** — Accessible UI primitives.
 - **Lucide React** — Icon library.
 - **ESLint & Prettier** — Code quality and formatting.
-- - **Jest** — (Optional) For unit testing.
+- **Jest** — (Optional) For unit testing.
 
 ---
 
