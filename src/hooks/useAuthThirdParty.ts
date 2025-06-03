@@ -1,4 +1,4 @@
-import { RegisterRequestBody } from "@/interfaces/User";
+import { LoginRequestBody, RegisterRequestBody } from "@/interfaces/User";
 import { auth } from "@/lib/firebase";
 import {
   loginWithProvider,
@@ -9,7 +9,11 @@ import {
   generatePlaceholderImageUrl,
   usernameFromEmail,
 } from "@/utils/common.utils";
-import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
+import {
+  FacebookAuthProvider,
+  GoogleAuthProvider,
+  signInWithPopup,
+} from "firebase/auth";
 import { useRouter } from "next/navigation";
 import { useToast } from "./use-toast";
 
@@ -31,7 +35,96 @@ const useAuthThirdParty = () => {
       const result = await signInWithPopup(auth, googleProvider);
       const { user } = result;
 
-      console.log("Google Sign In Result:", result);
+      // Validate user data
+      if (!user?.providerData[0]?.email || !result.providerId) {
+        toast({
+          title: "Login Failed",
+          description: "Unable to retrieve user information.",
+        });
+        return;
+      }
+
+      // Prepare data for API
+      const data: Pick<
+        RegisterRequestBody,
+        "email" | "provider" | "providerUUID" | "name"
+      > = {
+        email: user.providerData[0].email,
+        provider: user.providerData[0].providerId,
+        providerUUID: user.uid,
+        name: user.displayName || "Unknown User",
+        // refreshToken: user.refreshToken,
+        // accessToken: token,
+      };
+
+      console.log("Login Data:", data);
+
+      // Call login API
+      const res = await loginWithProvider({
+        email: data.email,
+        provider: data.provider,
+        providerUUID: data.providerUUID,
+      });
+
+      if (res) {
+        const { status, data: userData, message } = res;
+
+        if (status) {
+          // Successful login
+          toast({
+            title: "Logged In",
+            description: "You have logged in successfully.",
+            style: {
+              backgroundColor: "#A7F3D0",
+              borderColor: "#A7F3D0",
+              color: "black",
+            },
+          });
+
+          // Save user data to local storage
+          setUser(userData);
+          // localStorage.setItem("user", JSON.stringify(userData));
+
+          // Redirect to profile
+          router.push("/profile");
+        } else {
+          // Login failed with API error
+          toast({
+            title: "Login Failed",
+            description: message || "An error occurred during login.",
+            style: {
+              backgroundColor: "#FF8682",
+              borderColor: "#FF8682",
+              color: "white",
+            },
+          });
+        }
+      }
+    } catch (error: any) {
+      // Handle errors from Firebase or API
+      toast({
+        title: "Error",
+        description: error.message || "An unexpected error occurred.",
+        style: {
+          backgroundColor: "#FF8682",
+          borderColor: "#FF8682",
+          color: "white",
+        },
+      });
+    }
+  };
+
+  /**
+   * @description Login with Facebook using OAuth Facebook Provider Firebase
+   */
+  const onLoginWithFacebook = async () => {
+    const facebookProvider = new FacebookAuthProvider();
+    facebookProvider.addScope("email");
+
+    try {
+      // Sign in with Facebook
+      const result = await signInWithPopup(auth, facebookProvider);
+      const { user } = result;
 
       // Validate user data
       if (!user?.providerData[0]?.email || !result.providerId) {
@@ -43,16 +136,14 @@ const useAuthThirdParty = () => {
       }
 
       // Prepare data for API
-      const data = {
+      const data: Pick<
+        LoginRequestBody,
+        "email" | "provider" | "providerUUID"
+      > = {
         email: user.providerData[0].email,
-        provider: "google",
+        provider: user.providerData[0].providerId,
         providerUUID: user.uid,
-        name: user.displayName || "Unknown User",
-        // refreshToken: user.refreshToken,
-        // accessToken: token,
       };
-
-      console.log("Login Data:", data);
 
       // Call login API
       const res = await loginWithProvider({
@@ -202,6 +293,7 @@ const useAuthThirdParty = () => {
 
   return {
     onLoginWithGoogle,
+    onLoginWithFacebook,
     onRegisterWithGoogle,
     handleLogout,
   };

@@ -29,14 +29,6 @@ export default function FormLogin() {
   const user = useAuthStore((state) => state.user);
   const router = useRouter();
 
-  // Use useEffect for navigation side-effect
-  useEffect(() => {
-    if (user) {
-      router.push("/profile");
-      return; // Prevent further execution
-    }
-  }, [user, router]);
-
   const method = useForm<LoginData>({
     defaultValues: {
       email: "",
@@ -68,6 +60,14 @@ export default function FormLogin() {
   const onSubmit: SubmitHandler<LoginData> = (data) => {
     mutateAsync(data);
   };
+
+  // Use useEffect for navigation side-effect
+  useEffect(() => {
+    if (user) {
+      router.push("/profile");
+      return; // Prevent further execution
+    }
+  }, [user, router]);
 
   return (
     <>
