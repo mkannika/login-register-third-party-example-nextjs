@@ -51,8 +51,16 @@ yarn install
 3. **Configure environment variables**
 Create a `.env` file in the root directory and fill in your credentials:
 ```
+# Environment variables declared in this file are automatically made available to Prisma.
+# See the documentation for more detail: https://pris.ly/d/prisma-schema#accessing-environment-variables-from-the-schema
+
+# Prisma supports the native connection string format for PostgreSQL, MySQL, SQLite, SQL Server, MongoDB and CockroachDB.
+# See the documentation for all the connection string options: https://pris.ly/d/connection-strings
+
 DATABASE_URL=""
+
 # FIREBASE
+# See the Firebase documentation for how to set up your Firebase project and obtain these values: https://firebase.google.com/docs/web/setup#config-object
 NEXT_PUBLIC_FIREBASE_API_KEY=""
 NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=""
 NEXT_PUBLIC_FIREBASE_PROJECT_ID=""
