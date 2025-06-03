@@ -1,12 +1,10 @@
-// Create function to handle POST requests for user registration with email and password and find on prisma
-
 import { RegisterRequestBody } from "@/interfaces/User";
 import prisma from "@/lib/prisma";
 import { isValidUrl } from "@/utils/common.utils";
 import { NextResponse } from "next/server";
 
 export async function POST(req: Request) {
-  const { email, name, password, photoURL } =
+  const { email, name, provider, providerUUID, photoURL } =
     (await req.json()) as RegisterRequestBody;
 
   // Check if the user already exists in the database
@@ -41,7 +39,8 @@ export async function POST(req: Request) {
     data: {
       email,
       name,
-      password, // Assuming password is hashed before this step
+      provider,
+      providerUUID,
       photoURL,
     },
   });

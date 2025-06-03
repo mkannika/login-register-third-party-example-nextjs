@@ -1,10 +1,17 @@
 "use client";
 
 import LoginThirdParty from "@/components/LoginThirdParty";
+import { toast } from "@/hooks/use-toast";
+import { loginEmailPassword } from "@/services/auth.service";
+import { useAuthStore } from "@/stores/authStore";
 import { Checkbox } from "@radix-ui/react-checkbox";
 import { TextField } from "@radix-ui/themes";
+import { useMutation } from "@tanstack/react-query";
 import clsx from "clsx";
+import { LoaderIcon } from "lucide-react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 import {
   Controller,
   FormProvider,
@@ -19,6 +26,9 @@ type LoginData = {
 };
 
 export default function FormLogin() {
+  const user = useAuthStore((state) => state.user);
+  const router = useRouter();
+
   const method = useForm<LoginData>({
     defaultValues: {
       email: "",
@@ -26,7 +36,38 @@ export default function FormLogin() {
       remember_me: false,
     },
   });
-  const onSubmit: SubmitHandler<LoginData> = (data) => console.log(data);
+
+  const { mutateAsync, isPending } = useMutation({
+    mutationFn: async (data: LoginData) => {
+      const res = await loginEmailPassword({
+        email: data.email,
+        password: data.password,
+      });
+      if (!res.status) {
+        toast({
+          title: "Error",
+          description: res.message,
+          style: {
+            backgroundColor: "#FF8682",
+            borderColor: "#FF8682",
+            color: "white",
+          },
+        });
+      }
+    },
+  });
+
+  const onSubmit: SubmitHandler<LoginData> = (data) => {
+    mutateAsync(data);
+  };
+
+  // Use useEffect for navigation side-effect
+  useEffect(() => {
+    if (user) {
+      router.push("/profile");
+      return; // Prevent further execution
+    }
+  }, [user, router]);
 
   return (
     <>
@@ -46,9 +87,9 @@ export default function FormLogin() {
               <div className="input-wrapper">
                 <TextField.Root {...field} placeholder="Email" type="email" />
                 {method.formState.errors.email && (
-                  <p className="text-[#FF8682] text-sm mt-1">
+                  <div className="text-[#FF8682] text-sm mt-1">
                     {method.formState.errors.email.message}
-                  </p>
+                  </div>
                 )}
               </div>
             )}
@@ -71,9 +112,9 @@ export default function FormLogin() {
                   type="password"
                 />
                 {method.formState.errors.password && (
-                  <p className="text-[#FF8682] text-sm mt-1">
+                  <div className="text-[#FF8682] text-sm mt-1">
                     {method.formState.errors.password.message}
-                  </p>
+                  </div>
                 )}
               </div>
             )}
@@ -107,15 +148,22 @@ export default function FormLogin() {
             </Link>
           </div>
           <div className="mt-10 flex items-center gap-4 flex-col">
-            <button type="submit" className="hover:opacity-75">
+            <button
+              type="submit"
+              className="hover:opacity-75 disabled:opacity-75"
+              disabled={isPending}
+            >
+              {isPending ? (
+                <LoaderIcon className="animate-spin" aria-label="Loading" />
+              ) : null}
               Submit
             </button>
-            <p className="text-sm font-medium">
+            <div className="text-sm font-medium">
               Don’t have an account?{" "}
               <Link href="signup" className="text-[#FF8682] hover:underline">
                 Sign up
               </Link>
-            </p>
+            </div>
           </div>
         </form>
       </FormProvider>

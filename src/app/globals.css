@@ -56,7 +56,8 @@ input[type="password"] {
   }
 }
 
-button[type="submit"] {
+button[type="submit"],
+button.btn-purple {
   display: flex;
   height: 48px;
   padding: 8px 16px;
@@ -155,4 +156,46 @@ button.btn-third-party {
   body {
     @apply bg-background text-foreground;
   }
+}
+
+/* wysiwyg */
+.wysiwyg p {
+  margin: 0;
+  padding: 0;
+}
+.wysiwyg h1,
+.wysiwyg h2,
+.wysiwyg h3,
+.wysiwyg h4,
+.wysiwyg h5,
+.wysiwyg h6 {
+  margin: 0;
+  padding: 0;
+  font-weight: 600;
+}
+.wysiwyg h1 {
+  font-size: 2em;
+}
+.wysiwyg h2 {
+  font-size: 1.5em;
+}
+.wysiwyg h3 {
+  font-size: 1.17em;
+}
+.wysiwyg h4 {
+  font-size: 1em;
+}
+.wysiwyg h5 {
+  font-size: 0.83em;
+}
+.wysiwyg h6 {
+  font-size: 0.67em;
+}
+.wysiwyg ul {
+  list-style-type: disc;
+  padding-left: 1.5em;
+}
+.wysiwyg ol {
+  list-style-type: decimal;
+  padding-left: 1.5em;
 }

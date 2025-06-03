@@ -1,7 +1,7 @@
 "use client";
 
 import GoogleIcon from "@/components/GoogleIcon";
-import useLoginThirdParty from "@/hooks/useAuthenThirdParty";
+import useLoginThirdParty from "@/hooks/useAuthThirdParty";
 import AppleIcon from "./AppleIcon";
 import FacebookIcon from "./FacebookIcon";
 
