@@ -46,8 +46,6 @@ git@github.com:mkannika/login-register-third-party-example-nextjs.git
 
 3. **Install dependencies**
 ```
-npm install
-# or
 yarn install
 ```
 3. **Configure environment variables**
