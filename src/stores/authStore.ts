@@ -1,10 +1,10 @@
-import { UserResponse } from "@/interfaces/User";
+import { UserStorage } from "@/interfaces/User";
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
 
 interface AuthState {
-  user: UserResponse | null;
-  setUser: (user: UserResponse | null) => void;
+  user: UserStorage | null;
+  setUser: (user: UserStorage | null) => void;
   logout: () => void;
 }
 

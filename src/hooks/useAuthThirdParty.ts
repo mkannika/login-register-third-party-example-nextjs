@@ -1,4 +1,6 @@
-import { LoginRequestBody, RegisterRequestBody } from "@/interfaces/User";
+"use client";
+
+import { RegisterRequestBody } from "@/interfaces/User";
 import { auth } from "@/lib/firebase";
 import {
   loginWithProvider,
@@ -11,11 +13,14 @@ import {
 } from "@/utils/common.utils";
 import {
   FacebookAuthProvider,
+  fetchSignInMethodsForEmail,
   GoogleAuthProvider,
   signInWithPopup,
 } from "firebase/auth";
 import { useRouter } from "next/navigation";
 import { useToast } from "./use-toast";
+
+type ProviderType = "google" | "facebook";
 
 const useAuthThirdParty = () => {
   const { toast } = useToast();
@@ -24,109 +29,29 @@ const useAuthThirdParty = () => {
   const setUser = useAuthStore((state) => state.setUser);
 
   /**
-   * @description Login with Google using OAuth Google Provider Firebase
+   * @description Login with OAuth Provider (Google or Facebook)
    */
-  const onLoginWithGoogle = async () => {
-    const googleProvider = new GoogleAuthProvider();
-    googleProvider.addScope("email");
-
-    try {
-      // Sign in with Google
-      const result = await signInWithPopup(auth, googleProvider);
-      const { user } = result;
-
-      // Validate user data
-      if (!user?.providerData[0]?.email || !result.providerId) {
-        toast({
-          title: "Login Failed",
-          description: "Unable to retrieve user information.",
-        });
-        return;
-      }
-
-      // Prepare data for API
-      const data: Pick<
-        RegisterRequestBody,
-        "email" | "provider" | "providerUUID" | "name"
-      > = {
-        email: user.providerData[0].email,
-        provider: user.providerData[0].providerId,
-        providerUUID: user.uid,
-        name: user.displayName || "Unknown User",
-        // refreshToken: user.refreshToken,
-        // accessToken: token,
-      };
-
-      console.log("Login Data:", data);
-
-      // Call login API
-      const res = await loginWithProvider({
-        email: data.email,
-        provider: data.provider,
-        providerUUID: data.providerUUID,
-      });
-
-      if (res) {
-        const { status, data: userData, message } = res;
-
-        if (status) {
-          // Successful login
-          toast({
-            title: "Logged In",
-            description: "You have logged in successfully.",
-            style: {
-              backgroundColor: "#A7F3D0",
-              borderColor: "#A7F3D0",
-              color: "black",
-            },
-          });
-
-          // Save user data to local storage
-          setUser(userData);
-          // localStorage.setItem("user", JSON.stringify(userData));
-
-          // Redirect to profile
-          router.push("/profile");
-        } else {
-          // Login failed with API error
-          toast({
-            title: "Login Failed",
-            description: message || "An error occurred during login.",
-            style: {
-              backgroundColor: "#FF8682",
-              borderColor: "#FF8682",
-              color: "white",
-            },
-          });
-        }
-      }
-    } catch (error: any) {
-      // Handle errors from Firebase or API
+  const loginWithOAuthProvider = async (providerType: ProviderType) => {
+    let provider: GoogleAuthProvider | FacebookAuthProvider;
+    if (providerType === "google") {
+      provider = new GoogleAuthProvider();
+      provider.addScope("email");
+    } else if (providerType === "facebook") {
+      provider = new FacebookAuthProvider();
+      provider.addScope("email");
+    } else {
       toast({
-        title: "Error",
-        description: error.message || "An unexpected error occurred.",
-        style: {
-          backgroundColor: "#FF8682",
-          borderColor: "#FF8682",
-          color: "white",
-        },
+        title: "Provider Error",
+        description: "Invalid authentication provider.",
       });
+      return;
     }
-  };
-
-  /**
-   * @description Login with Facebook using OAuth Facebook Provider Firebase
-   */
-  const onLoginWithFacebook = async () => {
-    const facebookProvider = new FacebookAuthProvider();
-    facebookProvider.addScope("email");
 
     try {
-      // Sign in with Facebook
-      const result = await signInWithPopup(auth, facebookProvider);
+      // Sign in with selected provider
+      const result = await signInWithPopup(auth, provider);
       const { user } = result;
 
-      // Validate user data
       if (!user?.providerData[0]?.email || !result.providerId) {
         toast({
           title: "Login Failed",
@@ -135,28 +60,23 @@ const useAuthThirdParty = () => {
         return;
       }
 
-      // Prepare data for API
-      const data: Pick<
-        LoginRequestBody,
-        "email" | "provider" | "providerUUID"
-      > = {
-        email: user.providerData[0].email,
-        provider: user.providerData[0].providerId,
-        providerUUID: user.uid,
-      };
-
       // Call login API
       const res = await loginWithProvider({
-        email: data.email,
-        provider: data.provider,
-        providerUUID: data.providerUUID,
+        email: user.providerData[0].email,
       });
 
       if (res) {
         const { status, data: userData, message } = res;
 
         if (status) {
-          // Successful login
+          // If login is successful, set user data in the store
+          setUser({
+            email: userData.email,
+            name: userData.name,
+            photoURL:
+              userData.photoURL || generatePlaceholderImageUrl(userData.name),
+          });
+
           toast({
             title: "Logged In",
             description: "You have logged in successfully.",
@@ -167,17 +87,13 @@ const useAuthThirdParty = () => {
             },
           });
 
-          // Save user data to local storage
-          setUser(userData);
-          // localStorage.setItem("user", JSON.stringify(userData));
-
-          // Redirect to profile
-          router.push("/profile");
+          setTimeout(() => {
+            router.push("/profile");
+          }, 1000);
         } else {
-          // Login failed with API error
           toast({
             title: "Login Failed",
-            description: message || "An error occurred during login.",
+            description: message || "เกิดข้อผิดพลาดในการเข้าสู่ระบบ",
             style: {
               backgroundColor: "#FF8682",
               borderColor: "#FF8682",
@@ -187,10 +103,63 @@ const useAuthThirdParty = () => {
         }
       }
     } catch (error: any) {
-      // Handle errors from Firebase or API
+      // Handle account-exists-with-different-credential
+      if (error.code === "auth/account-exists-with-different-credential") {
+        const email = error.customData?.email;
+        console.log("email", email);
+        console.log("data", error.customData);
+
+        if (email) {
+          const methods = await fetchSignInMethodsForEmail(auth, email);
+
+          // Guide user to sign in with the existing provider
+          if (methods.includes("password")) {
+            toast({
+              title: "บัญชีนี้มีอยู่แล้วโดยใช้รหัสผ่าน",
+              description:
+                "กรุณาเข้าสู่ระบบด้วยรหัสผ่านของคุณเพื่อเชื่อมโยงผู้ให้บริการนี้",
+              style: {
+                backgroundColor: "#FF8682",
+                borderColor: "#FF8682",
+                color: "white",
+              },
+            });
+            // Optionally, prompt for password and link
+            // (You can implement a modal for password input here)
+          } else if (
+            methods.includes("google.com") ||
+            methods.includes("facebook.com")
+          ) {
+            const existingProvider = methods.includes("google.com")
+              ? "Google"
+              : "Facebook";
+            toast({
+              title: "บัญชีนี้มีอยู่แล้ว",
+              description: `บัญชีนี้มีอยู่แล้วโดยใช้ ${existingProvider} โปรดเข้าสู่ระบบด้วย ${existingProvider} และเชื่อมโยงจากโปรไฟล์ของคุณ`,
+              style: {
+                backgroundColor: "#FF8682",
+                borderColor: "#FF8682",
+                color: "white",
+              },
+            });
+          } else {
+            toast({
+              title: "บัญชีนี้มีอยู่แล้ว",
+              description: `โปรดเข้าสู่ระบบด้วยผู้ให้บริการที่มีอยู่แล้วและเชื่อมโยงจากโปรไฟล์ของคุณ`,
+              style: {
+                backgroundColor: "#FF8682",
+                borderColor: "#FF8682",
+                color: "white",
+              },
+            });
+          }
+        }
+        return;
+      }
+
       toast({
         title: "Error",
-        description: error.message || "An unexpected error occurred.",
+        description: error.message || "เกิดข้อผิดพลาดที่ไม่คาดคิด",
         style: {
           backgroundColor: "#FF8682",
           borderColor: "#FF8682",
@@ -203,16 +172,27 @@ const useAuthThirdParty = () => {
   /**
    * @description Register with Google using OAuth Google Provider Firebase
    */
-  const onRegisterWithGoogle = async () => {
-    const googleProvider = new GoogleAuthProvider();
-    googleProvider.addScope("email");
+  // Register with Google or Facebook
+  const registerWithOAuthProvider = async (providerType: ProviderType) => {
+    let provider;
+    if (providerType === "google") {
+      provider = new GoogleAuthProvider();
+      provider.addScope("email");
+    } else if (providerType === "facebook") {
+      provider = new FacebookAuthProvider();
+      provider.addScope("email");
+    } else {
+      toast({
+        title: "Provider Error",
+        description: "Invalid authentication provider.",
+      });
+      return;
+    }
 
     try {
-      // Sign in with Google
-      const result = await signInWithPopup(auth, googleProvider);
+      const result = await signInWithPopup(auth, provider);
       const { user } = result;
 
-      // Validate user data
       if (!user?.providerData[0]?.email || !result.providerId) {
         toast({
           title: "Registration Failed",
@@ -221,7 +201,6 @@ const useAuthThirdParty = () => {
         return;
       }
 
-      // Prepare data for API
       const name =
         user.displayName ||
         usernameFromEmail(user.providerData[0].email) ||
@@ -234,46 +213,41 @@ const useAuthThirdParty = () => {
         photoURL: user.photoURL ?? generatePlaceholderImageUrl(name),
       };
 
-      // Call register API
       const res = await registerWithProvider(data);
 
-      if (res) {
-        const { status, message } = res;
+      if (res?.status) {
+        toast({
+          title: "Registered",
+          description: "You have registered successfully.",
+          style: {
+            backgroundColor: "#A7F3D0",
+            borderColor: "#A7F3D0",
+            color: "black",
+          },
+        });
 
-        if (status) {
-          // Successful registration
-          toast({
-            title: "Registered",
-            description: "You have registered successfully.",
-            style: {
-              backgroundColor: "#A7F3D0",
-              borderColor: "#A7F3D0",
-              color: "black",
-            },
-          });
+        setUser({
+          email: data.email,
+          name: data.name,
+          photoURL: data.photoURL || generatePlaceholderImageUrl(data.name),
+        });
 
-          setUser(res.data);
-
-          // Redirect to profile
-          router.push("/profile");
-        } else {
-          // Registration failed with API error
-          toast({
-            title: "Registration Failed",
-            description: message || "An error occurred during registration.",
-            style: {
-              backgroundColor: "#FF8682",
-              borderColor: "#FF8682",
-              color: "white",
-            },
-          });
-        }
+        router.push("/profile");
+      } else {
+        toast({
+          title: "Registration Failed",
+          description: res?.message || "An error occurred during registration.",
+          style: {
+            backgroundColor: "#FF8682",
+            borderColor: "#FF8682",
+            color: "white",
+          },
+        });
       }
     } catch (error: any) {
-      // Handle errors from Firebase or API
       toast({
         title: "Error",
-        description: error.message || "An unexpected error occurred.",
+        description: error.message || "เกิดข้อผิดพลาดที่ไม่คาดคิด",
         style: {
           backgroundColor: "#FF8682",
           borderColor: "#FF8682",
@@ -283,19 +257,9 @@ const useAuthThirdParty = () => {
     }
   };
 
-  const handleLogout = () => {
-    // Clear user data and redirect to home
-    useAuthStore.getState().logout();
-    if (typeof window !== "undefined") {
-      window.location.href = "/";
-    }
-  };
-
   return {
-    onLoginWithGoogle,
-    onLoginWithFacebook,
-    onRegisterWithGoogle,
-    handleLogout,
+    loginWithOAuthProvider,
+    registerWithOAuthProvider,
   };
 };
 

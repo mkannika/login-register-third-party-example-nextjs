@@ -48,6 +48,11 @@ export async function POST(req: Request) {
 
   return NextResponse.json({
     status: true,
-    data: newUser,
+    data: {
+      id: newUser.id,
+      email: newUser.email,
+      name: newUser.name,
+      photoURL: newUser.photoURL || "",
+    },
   });
 }

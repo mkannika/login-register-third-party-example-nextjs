@@ -15,15 +15,11 @@ import {
 
 export const loginWithProvider = async ({
   email,
-  provider,
-  providerUUID,
 }: Omit<LoginRequestBody, "password">): Promise<
   IResponseFormat<UserResponse>
 > => {
   const body = {
     email,
-    providerUUID,
-    provider,
   };
 
   try {
