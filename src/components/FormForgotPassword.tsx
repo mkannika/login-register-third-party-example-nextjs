@@ -1,6 +1,13 @@
 "use client";
 
+import { MESSAGES } from "@/constants/messages";
+import { toast } from "@/hooks/use-toast";
+import { forgotPassword } from "@/services/auth.service";
+import { TOAST_STYLE } from "@/styles/toast.style";
 import { TextField } from "@radix-ui/themes";
+import { useMutation } from "@tanstack/react-query";
+import { LoaderIcon } from "lucide-react";
+import { useCallback } from "react";
 import {
   Controller,
   FormProvider,
@@ -20,8 +27,43 @@ export default function FormForgotPassword() {
       email: "",
     },
   });
-  const onSubmit: SubmitHandler<ForgotPasswordData> = (data) =>
-    console.log(data);
+
+  const { mutateAsync, isPending } = useMutation({
+    mutationFn: async (data: ForgotPasswordData) => {
+      const res = await forgotPassword(data.email);
+      if (!res.status) {
+        throw new Error(res.message);
+      }
+      return res;
+    },
+    onSuccess: (data) => {
+      // Handle success, e.g., show a success message or redirect
+      toast({
+        title: "Success",
+        description: data.message || MESSAGES.AUTH.RESET_PASSWORD_SUCCESS,
+        style: TOAST_STYLE.success,
+      });
+    },
+    onError: (error) => {
+      console.error("Error:", error);
+      // Handle error, e.g., show an error message
+      method.setError("email", {
+        type: "manual",
+        message: error.message,
+      });
+
+      toast({
+        title: "Error",
+        description: error.message || MESSAGES.AUTH.RESET_PASSWORD_FAILURE,
+        style: TOAST_STYLE.error,
+      });
+    },
+  });
+
+  const onSubmit: SubmitHandler<ForgotPasswordData> = useCallback(
+    (data) => mutateAsync(data),
+    [mutateAsync],
+  );
 
   return (
     <>
@@ -54,7 +96,10 @@ export default function FormForgotPassword() {
           />
           <div className="flex items-center gap-4 flex-col">
             <button type="submit" className="hover:opacity-75">
-              Submit
+              {isPending ? (
+                <LoaderIcon className="animate-spin" aria-label="Loading" />
+              ) : null}
+              {isPending ? "Sending..." : "Send Reset Password Email"}
             </button>
           </div>
         </form>

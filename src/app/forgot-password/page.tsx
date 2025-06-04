@@ -1,3 +1,4 @@
+import BaseProvider from "@/components/BaseProvider";
 import FormForgotPassword from "@/components/FormForgotPassword";
 import LogoIcon from "@/components/LogoIcon";
 import IMAGE_FORGOT_PASSWORD from "@/public/image_03.webp";
@@ -34,7 +35,9 @@ export default function ForgotPassword() {
               recover your password
             </p>
           </div>
-          <FormForgotPassword />
+          <BaseProvider>
+            <FormForgotPassword />
+          </BaseProvider>
         </div>
         <div className="lg:max-w-[616px] w-full lg:flex flex-col items-center justify-center hidden">
           <div className="image-">

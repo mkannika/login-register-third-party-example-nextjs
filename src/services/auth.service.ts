@@ -4,7 +4,6 @@ import {
   RegisterRequestBody,
   UserResponse,
 } from "@/interfaces/User";
-import bcrypt from 'bcrypt';
 
 /**
  * @description API function to login with email and password
@@ -78,5 +77,143 @@ export const register = async (
   } catch (error: any) {
     // Return the error message from the API or a generic error message
     return error || "An unexpected error occurred during registration";
+  }
+};
+
+/**
+ * @description API function to forget password
+ * @param email - The email address of the user who wants to reset their password.
+ * @returns {Promise<IResponseFormat<null>>} - A promise that resolves to a response indicating success or failure.
+ * @throws {Error} - Throws an error if the request fails or if there is an unexpected error.
+ */
+export const forgotPassword = async (
+  email: string,
+): Promise<
+  IResponseFormat<{
+    message: string;
+    success: boolean;
+  }>
+> => {
+  const body = {
+    email,
+  };
+
+  try {
+    const response = await fetch("/api/auth/forgot-password", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(body),
+    });
+
+    // Check if the response is not OK
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.message || "Failed to reset password");
+    }
+
+    // Parse and return the response data
+    const data: IResponseFormat<{
+      message: string;
+      success: boolean;
+    }> = await response.json();
+    return data;
+  } catch (error: any) {
+    // Return the error message from the API or a generic error message
+    return error || "An unexpected error occurred during password reset";
+  }
+};
+
+/**
+ * @description API function to reset password
+ * @param token - The token provided by the user after clicking on the password reset link.
+ * @param password - The new password for the user.
+ * @returns {Promise<IResponseFormat<null>>} - A promise that resolves to a response indicating success or failure.
+ * @throws {Error} - Throws an error if the request fails or if there is an unexpected error.
+ */
+export const resetPassword = async (
+  token: string,
+  password: string,
+): Promise<
+  IResponseFormat<{
+    message: string;
+    success: boolean;
+  }>
+> => {
+  const body = {
+    token,
+    password,
+  };
+
+  try {
+    const response = await fetch("/api/auth/reset-password", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(body),
+    });
+
+    // Check if the response is not OK
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.message || "Failed to reset password");
+    }
+
+    // Parse and return the response data
+    const data: IResponseFormat<{
+      message: string;
+      success: boolean;
+    }> = await response.json();
+    return data;
+  } catch (error: any) {
+    // Return the error message from the API or a generic error message
+    return error || "An unexpected error occurred during password reset";
+  }
+};
+
+/**
+ * @description API function to verify email
+ * @param token - The token provided by the user after clicking on the verification link.
+ * @returns {Promise<IResponseFormat<null>>} - A promise that resolves to a response indicating success or failure.
+ * @throws {Error} - Throws an error if the request fails or if there is an unexpected error.
+ */
+export const verifyEmail = async (
+  token: string,
+): Promise<
+  IResponseFormat<{
+    message: string;
+    success: boolean;
+  }>
+> => {
+  const body = {
+    token,
+  };
+
+  try {
+    const response = await fetch("/api/auth/verify-email", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(body),
+    });
+
+    // Check if the response is not OK
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.message || "Failed to verify email");
+    }
+
+    // Parse and return the response data
+    const data: IResponseFormat<{
+      message: string;
+      success: boolean;
+    }> = await response.json();
+    return data;
+  } catch (error: any) {
+    // Return the error message from the API or a generic error message
+    return error || "An unexpected error occurred during email verification";
   }
 };
