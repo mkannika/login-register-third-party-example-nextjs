@@ -72,4 +72,11 @@ NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID=""
 GOOGLE_CLIENT_ID=""
 GOOGLE_CLIENT_SECRET=""
 GOOGLE_REDIRECT_URI=http://localhost:3000/api/auth/google/callback
+
+# EMAIL
+EMAIL_HOST="smtp.gmail.com"
+EMAIL_PORT="587"
+EMAIL_USER=""
+EMAIL_PASS=""
+NEXT_PUBLIC_BASE_URL="https://login-register-third-party-example-nextjs.vercel.app"
 ```
