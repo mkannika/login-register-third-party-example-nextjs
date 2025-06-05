@@ -80,3 +80,11 @@ EMAIL_USER=""
 EMAIL_PASS=""
 NEXT_PUBLIC_BASE_URL="https://login-register-third-party-example-nextjs.vercel.app"
 ```
+
+## Special Thanks 🙏
+A big thank you to the talented Figma designer who created the original design that inspired this project. 
+I don’t know who you are, but your work made a real difference — and I truly appreciate it!
+
+![Thumbnail](https://github.com/user-attachments/assets/f2a1ed72-e1b9-41f8-a377-dae3efa37a86)
+
+Link: [Figma](https://www.figma.com/design/zKJKW3lAy36rJm0vYQLs4Z/Login---Register-Web-UI-Kit--Freebie---Community-?node-id=1-2261&t=XsMs6vCruFskncAS-1)
