@@ -96,6 +96,12 @@ export default function PagePrivacyPolicy() {
             If you have any questions about this Privacy Policy, please contact:
           </p>
           <p>
+            If you would like to delete your account and associated data from
+            our app, please contact us at the email address below. We will
+            process your request promptly and ensure that all your data is safe
+            and secure.
+          </p>
+          <p>
             <strong>M.Kannika</strong> <br />
             <Link
               href="mailto:mkannika.consci@gmail.com"
