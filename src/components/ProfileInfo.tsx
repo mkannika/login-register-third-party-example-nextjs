@@ -30,7 +30,7 @@ export default function ProfileInfo() {
 
   useEffect(() => {
     if (!user) router.push("/");
-  }, [user]);
+  }, [user, router]);
 
   return (
     <div className="lg:max-w-[512px] w-full max-w-80 mx-auto">
