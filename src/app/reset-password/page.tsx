@@ -4,6 +4,7 @@ import LogoIcon from "@/components/LogoIcon";
 import IMAGE from "@/public/image_03.webp";
 import Image from "next/image";
 import Link from "next/link";
+import { Suspense } from "react";
 
 export default function PageNewPassword() {
   return (
@@ -29,7 +30,9 @@ export default function PageNewPassword() {
             </p>
           </div>
           <BaseProvider>
-            <FormNewPassword />
+            <Suspense>
+              <FormNewPassword />
+            </Suspense>
           </BaseProvider>
         </div>
         <div className="lg:max-w-[616px] w-full lg:flex flex-col items-center justify-center hidden">

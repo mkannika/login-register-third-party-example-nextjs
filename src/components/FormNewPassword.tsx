@@ -30,13 +30,6 @@ export default function FormNewPassword() {
   const searchParams = useSearchParams();
   const [token, setToken] = useState<string | null>(null);
 
-  useEffect(() => {
-    const queryToken = searchParams.get("token");
-    if (typeof queryToken === "string" && queryToken.length > 0) {
-      setToken(queryToken);
-    }
-  }, [searchParams]);
-
   const method = useForm<NewPasswordData>({
     defaultValues: {
       password: "",
@@ -84,8 +77,15 @@ export default function FormNewPassword() {
       }
       mutateAsync(data);
     },
-    [token],
+    [token, mutateAsync],
   );
+
+  useEffect(() => {
+    const queryToken = searchParams.get("token");
+    if (typeof queryToken === "string" && queryToken.length > 0) {
+      setToken(queryToken);
+    }
+  }, [searchParams]);
 
   return (
     <>
