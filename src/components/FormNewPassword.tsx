@@ -1,14 +1,20 @@
 "use client";
 
+import { toast } from "@/hooks/use-toast";
+import { resetPassword } from "@/services/auth.service";
+import { TOAST_STYLE } from "@/styles/toast.style";
 import { TextField } from "@radix-ui/themes/components/index";
+import { useMutation } from "@tanstack/react-query";
 import { EyeClosed, EyeIcon } from "lucide-react";
-import { useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useCallback, useEffect, useState } from "react";
 import {
   Controller,
   FormProvider,
   SubmitHandler,
   useForm,
 } from "react-hook-form";
+import SubmitButton from "./SubmitButton";
 
 type NewPasswordData = {
   password: string;
@@ -20,13 +26,66 @@ export default function FormNewPassword() {
   const [isConfirmPasswordVisible, setIsConfirmPasswordVisible] =
     useState<boolean>(false);
 
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const [token, setToken] = useState<string | null>(null);
+
+  useEffect(() => {
+    const queryToken = searchParams.get("token");
+    if (typeof queryToken === "string" && queryToken.length > 0) {
+      setToken(queryToken);
+    }
+  }, [searchParams]);
+
   const method = useForm<NewPasswordData>({
     defaultValues: {
       password: "",
       confirmPassword: "",
     },
   });
-  const onSubmit: SubmitHandler<NewPasswordData> = (data) => console.log(data);
+
+  const { mutateAsync, isPending } = useMutation({
+    mutationFn: async (data: NewPasswordData) => {
+      if (!token) {
+        throw new Error("Token is required for password reset");
+      }
+      const res = await resetPassword(token, data.password);
+      if (!res.status) {
+        throw new Error(res.message);
+      }
+      return res;
+    },
+    onSuccess: (data) => {
+      toast({
+        title: "Success",
+        description: data.message,
+        style: TOAST_STYLE.success,
+      });
+
+      setTimeout(() => {
+        // Redirect to login page after a short delay
+        router.push("/");
+      }, 1000);
+    },
+    onError: () => {
+      toast({
+        title: "Error",
+        description: "Failed to reset password. Please try again.",
+        style: TOAST_STYLE.error,
+      });
+    },
+  });
+
+  const onSubmit: SubmitHandler<NewPasswordData> = useCallback(
+    (data) => {
+      if (!token) {
+        console.error("Token is required for password reset");
+        return;
+      }
+      mutateAsync(data);
+    },
+    [token],
+  );
 
   return (
     <>
@@ -113,9 +172,7 @@ export default function FormNewPassword() {
             )}
           />
           <div className="flex items-center gap-4 flex-col">
-            <button type="submit" className="hover:opacity-75">
-              Submit
-            </button>
+            <SubmitButton isPending={isPending} />
           </div>
         </form>
       </FormProvider>

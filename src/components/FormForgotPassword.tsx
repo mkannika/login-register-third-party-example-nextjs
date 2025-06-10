@@ -6,7 +6,6 @@ import { forgotPassword } from "@/services/auth.service";
 import { TOAST_STYLE } from "@/styles/toast.style";
 import { TextField } from "@radix-ui/themes";
 import { useMutation } from "@tanstack/react-query";
-import { LoaderIcon } from "lucide-react";
 import { useCallback } from "react";
 import {
   Controller,
@@ -16,6 +15,7 @@ import {
 } from "react-hook-form";
 import FormDivider from "./FormDivider";
 import LoginThirdParty from "./LoginThirdParty";
+import SubmitButton from "./SubmitButton";
 
 type ForgotPasswordData = {
   email: string;
@@ -95,12 +95,7 @@ export default function FormForgotPassword() {
             )}
           />
           <div className="flex items-center gap-4 flex-col">
-            <button type="submit" className="hover:opacity-75">
-              {isPending ? (
-                <LoaderIcon className="animate-spin" aria-label="Loading" />
-              ) : null}
-              {isPending ? "Sending..." : "Send Reset Password Email"}
-            </button>
+            <SubmitButton isPending={isPending} />
           </div>
         </form>
       </FormProvider>

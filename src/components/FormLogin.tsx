@@ -9,7 +9,6 @@ import { Checkbox } from "@radix-ui/react-checkbox";
 import { TextField } from "@radix-ui/themes";
 import { useMutation } from "@tanstack/react-query";
 import clsx from "clsx";
-import { LoaderIcon } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect } from "react";
@@ -19,6 +18,7 @@ import {
   SubmitHandler,
   useForm,
 } from "react-hook-form";
+import SubmitButton from "./SubmitButton";
 
 type LoginData = {
   email: string;
@@ -166,16 +166,7 @@ export default function FormLogin() {
             </Link>
           </div>
           <div className="mt-10 flex items-center gap-4 flex-col">
-            <button
-              type="submit"
-              className="hover:opacity-75 disabled:opacity-75"
-              disabled={isPending}
-            >
-              {isPending ? (
-                <LoaderIcon className="animate-spin" aria-label="Loading" />
-              ) : null}
-              Submit
-            </button>
+            <SubmitButton isPending={isPending} />
             <div className="text-sm font-medium">
               Don’t have an account?{" "}
               <Link href="signup" className="text-[#FF8682] hover:underline">

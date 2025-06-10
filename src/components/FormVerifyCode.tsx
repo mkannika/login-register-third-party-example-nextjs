@@ -8,6 +8,7 @@ import {
   SubmitHandler,
   useForm,
 } from "react-hook-form";
+import SubmitButton from "./SubmitButton";
 
 type VerifyCodeData = {
   code: string;
@@ -61,9 +62,7 @@ export default function FormVerifyCode() {
             </Link>
           </p>
           <div className="flex items-center gap-4 flex-col">
-            <button type="submit" className="hover:opacity-75">
-              Submit
-            </button>
+            <SubmitButton isPending={false} />
           </div>
         </form>
       </FormProvider>

@@ -7,7 +7,6 @@ import { TOAST_STYLE } from "@/styles/toast.style";
 import { Checkbox } from "@radix-ui/react-checkbox";
 import { TextField } from "@radix-ui/themes";
 import { useMutation } from "@tanstack/react-query";
-import { LoaderIcon } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useCallback } from "react";
@@ -19,6 +18,7 @@ import {
 } from "react-hook-form";
 import FormDivider from "./FormDivider";
 import RegisterThirdParty from "./RegisterThirdParty";
+import SubmitButton from "./SubmitButton";
 
 type RegisterData = {
   firstName: string;
@@ -239,16 +239,7 @@ export default function FormRegister() {
             />
           </div>
           <div className="mt-6 flex items-center gap-4 flex-col">
-            <button
-              type="submit"
-              className="hover:opacity-75"
-              disabled={isPending}
-            >
-              {isPending ? (
-                <LoaderIcon className="animate-spin" aria-label="Loading" />
-              ) : null}
-              Submit
-            </button>
+            <SubmitButton isPending={isPending} />
             <p className="text-sm font-medium">
               Already have an account?{" "}
               <Link href="/" className="text-[#FF8682] hover:underline">
